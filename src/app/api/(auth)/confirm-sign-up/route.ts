@@ -3,6 +3,7 @@ import type { ConfirmSignUpCommandInput } from "@aws-sdk/client-cognito-identity
 
 import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
 import { ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { deleteAuthenticationResultFromCookies } from "@/app/api/utils";
 
 export const POST = async (
   request: NextRequest
@@ -21,6 +22,8 @@ export const POST = async (
     };
     const command = new ConfirmSignUpCommand(confirmSignUpCommandInput);
     await cognitoClient.send(command);
+
+    deleteAuthenticationResultFromCookies();
 
     return NextResponse.json(
       { message: "Account is confirmed." },

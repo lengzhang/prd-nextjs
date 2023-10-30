@@ -4,7 +4,7 @@ import type { GlobalSignOutCommandInput } from "@aws-sdk/client-cognito-identity
 
 import cognitoClient from "@/utils/cognito/cognitoClient";
 import { GlobalSignOutCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { deleteAuthenticationResultToCookies } from "@/app/api/utils";
+import { deleteAuthenticationResultFromCookies } from "@/app/api/utils";
 
 export const GET = async (): Promise<NextResponse<{ message: string }>> => {
   try {
@@ -19,7 +19,7 @@ export const GET = async (): Promise<NextResponse<{ message: string }>> => {
     const command = new GlobalSignOutCommand(globalSignOutCommandInput);
     await cognitoClient.send(command);
 
-    deleteAuthenticationResultToCookies();
+    deleteAuthenticationResultFromCookies();
 
     return NextResponse.json({ message: "Sign out success." }, { status: 200 });
   } catch (error) {

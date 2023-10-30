@@ -3,6 +3,7 @@ import type { ConfirmForgotPasswordCommandInput } from "@aws-sdk/client-cognito-
 
 import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
 import { ConfirmForgotPasswordCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { deleteAuthenticationResultFromCookies } from "@/app/api/utils";
 
 export const POST = async (
   request: NextRequest
@@ -27,6 +28,8 @@ export const POST = async (
       confirmForgotPasswordCommandInput
     );
     await cognitoClient.send(command);
+
+    deleteAuthenticationResultFromCookies();
 
     return NextResponse.json(
       { message: "Reset password is confirmed." },

@@ -1,34 +1,29 @@
 import { FormSubmitHandler, TextFieldChangeHandler } from "@/app/types";
 import { useLoadingBackdropContext } from "@/context/LoadingBackdropContext";
-import { useSearchParams, useRouter } from "next/navigation";
+import useCountTimer from "@/hooks/useCountTimer";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useEffect, useReducer, useRef } from "react";
 
 interface State {
   email: string;
   code: string;
-  resendCounter: number;
+  newPassword: string;
+  showPassword: boolean;
 }
 
 type Action =
-  | { type: "decrease-resend-counter" }
   | {
-      type: "set-email";
+      type: "set-email" | "set-code" | "set-new-password";
       value: string;
     }
-  | {
-      type: "set-code";
-      value: string;
-    }
-  | {
-      type: "set-resend-counter";
-      value: number;
-    };
+  | { type: "switch-show-password" };
 
 const initialState: State = {
   email: "",
   code: "",
-  resendCounter: 0,
+  newPassword: "",
+  showPassword: false,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -37,52 +32,54 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, email: action.value };
     case "set-code":
       return { ...state, code: action.value };
-    case "set-resend-counter":
-      return { ...state, resendCounter: action.value };
-    case "decrease-resend-counter":
-      return { ...state, resendCounter: state.resendCounter - 1 };
+    case "set-new-password":
+      return { ...state, newPassword: action.value };
+    case "switch-show-password":
+      return { ...state, showPassword: !state.showPassword };
     default:
       return state;
   }
 };
 
-const useConfirmSignUp = () => {
+const useConfirmResetPassword = () => {
   const router = useRouter();
-  const { handleLoadingState } = useLoadingBackdropContext();
-  const { enqueueSnackbar } = useSnackbar();
   const searchParams = useSearchParams();
+  const { enqueueSnackbar } = useSnackbar();
+  const { handleLoadingState } = useLoadingBackdropContext();
+
+  const { count, triggerTimer } = useCountTimer({
+    from: 30,
+    to: 0,
+    diff: -1,
+    delay: 1000,
+  });
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const resendTimerId = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     const email = searchParams.get("email");
     if (email) dispatch({ type: "set-email", value: email });
-    return () => {
-      if (resendTimerId.current) clearInterval(resendTimerId.current);
-    };
   }, []);
 
-  useEffect(() => {
-    if (state.resendCounter <= 0 && resendTimerId.current) {
-      clearInterval(resendTimerId.current);
-    }
-  }, [state.resendCounter]);
-
   const onChangeTextField =
-    (name: "email" | "code"): TextFieldChangeHandler =>
+    (name: "email" | "new-password" | "code"): TextFieldChangeHandler =>
     (event) => {
       dispatch({ type: `set-${name}`, value: event.target.value });
     };
 
-  const onConfirmSignUp: FormSubmitHandler = async (event) => {
+  const onSwitchShowPassword = () => {
+    dispatch({ type: "switch-show-password" });
+  };
+
+  const onConfirmResetPassword: FormSubmitHandler = async (event) => {
     event.preventDefault();
     handleLoadingState(true);
     const formData = new FormData();
     formData.append("email", state.email);
+    formData.append("password", state.newPassword);
     formData.append("confirmationCode", state.code);
 
-    const response = await fetch("/api/confirm-sign-up", {
+    const response = await fetch("/api/confirm-forgot-password", {
       body: formData,
       method: "POST",
     });
@@ -93,11 +90,12 @@ const useConfirmSignUp = () => {
       const body = await response.json();
       enqueueSnackbar(body.message || "Unknown error", { variant: "error" });
     }
+
     handleLoadingState(false);
   };
 
   const moveToSignInPage = () => {
-    enqueueSnackbar("Registration completed, please login to your account.", {
+    enqueueSnackbar("Reset password completed, please login to your account.", {
       variant: "success",
     });
     router.push("/sign-in");
@@ -108,7 +106,7 @@ const useConfirmSignUp = () => {
     const formData = new FormData();
     formData.append("email", state.email);
 
-    const response = await fetch("/api/resend-confirmation-code", {
+    const response = await fetch("/api/forgot-password", {
       body: formData,
       method: "POST",
     });
@@ -117,7 +115,7 @@ const useConfirmSignUp = () => {
       enqueueSnackbar("Confirmation code sent, please check your email.", {
         variant: "success",
       });
-      triggerResendTimer();
+      triggerTimer();
     } else {
       const body = await response.json();
       enqueueSnackbar(body.message || "Unknown error", { variant: "error" });
@@ -125,21 +123,14 @@ const useConfirmSignUp = () => {
     handleLoadingState(false);
   };
 
-  const triggerResendTimer = () => {
-    if (state.resendCounter === 0) {
-      dispatch({ type: "set-resend-counter", value: 30 });
-      resendTimerId.current = setInterval(() => {
-        dispatch({ type: "decrease-resend-counter" });
-      }, 1000);
-    }
-  };
-
   return {
     state,
+    count,
     onChangeTextField,
-    onConfirmSignUp,
+    onSwitchShowPassword,
+    onConfirmResetPassword,
     onClickResendConfirmationCode,
   };
 };
 
-export default useConfirmSignUp;
+export default useConfirmResetPassword;

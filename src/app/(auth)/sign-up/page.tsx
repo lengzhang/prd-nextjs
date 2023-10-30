@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   IconButton,
   Stack,
   TextField,
@@ -13,6 +12,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Link from "next/link";
 
+import AuthCardHeader from "@/app/(auth)/AuthCardHeader";
 import AuthCardActions from "@/app/(auth)/AuthCardActions";
 
 import useSignUp from "./useSignUp";
@@ -23,7 +23,7 @@ const SignUpPage = () => {
   return (
     <form onSubmit={onSignUp}>
       <Card>
-        <CardHeader title="Sign up" />
+        <AuthCardHeader title="Sign up" />
         <CardContent>
           <Stack spacing={2}>
             <TextField
@@ -74,7 +74,7 @@ const SignUpPage = () => {
               Sign Up
             </Button>
             <Typography variant="caption" align="center">
-              Already have an account? <Link href="/sign-in">Sign In</Link>
+              Already have an account? <Link href="/sign-in">Sign in</Link>
             </Typography>
           </Stack>
         </AuthCardActions>

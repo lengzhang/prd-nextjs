@@ -1,25 +1,36 @@
 "use client";
 
-import { Button, Card, CardContent, TextField, Stack } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Card,
+  CardContent,
+  Stack,
+  TextField,
+  Button,
+  IconButton,
+} from "@mui/material";
 
 import AuthCardHeader from "@/app/(auth)/AuthCardHeader";
 import AuthCardActions from "@/app/(auth)/AuthCardActions";
 
-import useConfirmSignUp from "./useConfirmSignUp";
+import useConfirmResetPassword from "./useConfirmForgotPassword";
 
-const ConfirmSignUpPage = () => {
+const ConfirmResetPasswordPage = () => {
   const {
     state,
+    count,
     onChangeTextField,
-    onConfirmSignUp,
+    onSwitchShowPassword,
+    onConfirmResetPassword,
     onClickResendConfirmationCode,
-  } = useConfirmSignUp();
+  } = useConfirmResetPassword();
+
   return (
-    <form onSubmit={onConfirmSignUp}>
+    <form onSubmit={onConfirmResetPassword}>
       <Card>
         <AuthCardHeader
-          title="Confirm sign up"
-          subheader="Please use the verification code from your email to complete the registration."
+          title="Confirm reset password"
+          subheader="Please use the verification code to reset your password."
         />
         <CardContent>
           <Stack spacing={2}>
@@ -45,10 +56,28 @@ const ConfirmSignUpPage = () => {
               type="text"
               required
             />
+            <TextField
+              id="new_password"
+              label="New password"
+              variant="outlined"
+              fullWidth
+              size="small"
+              value={state.newPassword}
+              onChange={onChangeTextField("new-password")}
+              type={state.showPassword ? "text" : "password"}
+              required
+              InputProps={{
+                endAdornment: (
+                  <IconButton onClick={onSwitchShowPassword} size="small">
+                    {state.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                ),
+              }}
+            />
           </Stack>
         </CardContent>
         <AuthCardActions>
-          <Stack width="100%" spacing={1} paddingBottom={1}>
+          <Stack width="100%" spacing={1}>
             <Button variant="outlined" fullWidth size="small" type="submit">
               Confirm
             </Button>
@@ -57,10 +86,10 @@ const ConfirmSignUpPage = () => {
               fullWidth
               size="small"
               onClick={onClickResendConfirmationCode}
-              disabled={state.resendCounter > 0}
+              disabled={count > 0}
             >
               Resend confirmation code
-              {state.resendCounter > 0 ? ` in ${state.resendCounter}s` : ""}
+              {count > 0 ? ` in ${count}s` : ""}
             </Button>
           </Stack>
         </AuthCardActions>
@@ -69,4 +98,4 @@ const ConfirmSignUpPage = () => {
   );
 };
 
-export default ConfirmSignUpPage;
+export default ConfirmResetPasswordPage;

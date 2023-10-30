@@ -10,7 +10,7 @@ export const setAuthenticationResultToCookies = (
   cookies().set("idToken", result.IdToken || "");
 };
 
-export const deleteAuthenticationResultToCookies = () => {
+export const deleteAuthenticationResultFromCookies = () => {
   cookies().delete("accessToken");
   cookies().delete("expiresIn");
   cookies().delete("refreshToken");

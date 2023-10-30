@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   IconButton,
   Stack,
   TextField,
@@ -14,6 +13,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import Link from "next/link";
 
+import AuthCardHeader from "@/app/(auth)/AuthCardHeader";
 import AuthCardActions from "@/app/(auth)/AuthCardActions";
 
 import useSignIn from "./useSignIn";
@@ -30,7 +30,7 @@ const LoginPage = () => {
   return (
     <form onSubmit={onSingIn}>
       <Card>
-        <CardHeader title="Sign in" />
+        <AuthCardHeader title="Sign in" />
         <CardContent>
           <Stack spacing={2}>
             <TextField
