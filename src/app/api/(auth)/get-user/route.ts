@@ -7,15 +7,8 @@ import type {
 
 import cognitoClient from "@/utils/cognito/cognitoClient";
 import { GetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
-
-interface UserInfo {
-  id: string;
-  email: string;
-  emailVerified: boolean;
-  username: string;
-  updatedAt: number | null;
-  createdAt: number | null;
-}
+import { UserInfo } from "@/app/types";
+import { deleteAuthenticationResultFromCookies } from "../../utils";
 
 export const GET = async (): Promise<
   NextResponse<UserInfo | { message: string }>
@@ -36,6 +29,9 @@ export const GET = async (): Promise<
   } catch (error) {
     const errorMsg =
       error instanceof Error ? error.message : "Unknown exception.";
+    if (errorMsg === "Access Token has expired") {
+      deleteAuthenticationResultFromCookies();
+    }
     return NextResponse.json({ message: errorMsg }, { status: 500 });
   }
 };

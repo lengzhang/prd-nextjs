@@ -7,3 +7,12 @@ export type TextFieldChangeHandler = ChangeEventHandler<
 >;
 
 export type FormSubmitHandler = FormEventHandler<HTMLFormElement>;
+
+export interface UserInfo {
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  username: string;
+  updatedAt: number | null;
+  createdAt: number | null;
+}

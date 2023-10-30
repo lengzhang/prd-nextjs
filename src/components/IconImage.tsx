@@ -13,7 +13,7 @@ const IconImage: FC<Pick<ImageProps, "width">> = ({ width }) => {
   return (
     <StyledImage
       alt="prd-icon"
-      src="/prd-icon.png"
+      src="/favicon-32x32.png"
       width={width}
       height={width}
     />

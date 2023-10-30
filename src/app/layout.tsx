@@ -1,5 +1,16 @@
 import { LayoutComponent } from "@/app/types";
 import SnackBarWrapper from "@/components/SnackbarWrapper";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Property Report Dashboard",
+  viewport: { width: "device-width", initialScale: 1 },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-32x32.png",
+    apple: "/public/apple-touch-icon.png",
+  },
+};
 
 const RootLayout: LayoutComponent = ({ children }) => {
   // Layouts must accept a children prop.
