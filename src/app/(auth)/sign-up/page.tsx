@@ -11,26 +11,19 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
 import Link from "next/link";
 
 import AuthCardActions from "@/app/(auth)/AuthCardActions";
 
-import useSignIn from "./useSignIn";
+import useSignUp from "./useSignUp";
 
-const LoginPage = () => {
-  const {
-    state,
-    onChangeEmail,
-    onChangePassword,
-    onSwitchShowPassword,
-    onSingIn,
-  } = useSignIn();
-
+const SignUpPage = () => {
+  const { state, onChangeTextField, onSwitchShowPassword, onSignUp } =
+    useSignUp();
   return (
-    <form onSubmit={onSingIn}>
+    <form onSubmit={onSignUp}>
       <Card>
-        <CardHeader title="Sign in" />
+        <CardHeader title="Sign up" />
         <CardContent>
           <Stack spacing={2}>
             <TextField
@@ -40,7 +33,7 @@ const LoginPage = () => {
               fullWidth
               size="small"
               value={state.email}
-              onChange={onChangeEmail}
+              onChange={onChangeTextField("email")}
               type="email"
               required
             />
@@ -51,7 +44,7 @@ const LoginPage = () => {
               fullWidth
               size="small"
               value={state.password}
-              onChange={onChangePassword}
+              onChange={onChangeTextField("password")}
               type={state.showPassword ? "text" : "password"}
               required
               InputProps={{
@@ -62,19 +55,26 @@ const LoginPage = () => {
                 ),
               }}
             />
+            <TextField
+              id="username"
+              label="Username"
+              variant="outlined"
+              fullWidth
+              size="small"
+              value={state.username}
+              onChange={onChangeTextField("username")}
+              type="text"
+              required
+            />
           </Stack>
         </CardContent>
         <AuthCardActions>
           <Stack width="100%" spacing={1}>
             <Button variant="outlined" fullWidth size="small" type="submit">
-              Login
+              Sign Up
             </Button>
             <Typography variant="caption" align="center">
-              Do not have an account? <Link href="/sign-up">Sign up</Link>
-            </Typography>
-            <Typography variant="caption" align="center">
-              Forgot your password?{" "}
-              <Link href="/reset-password">Reset password</Link>
+              Already have an account? <Link href="/sign-in">Sign In</Link>
             </Typography>
           </Stack>
         </AuthCardActions>
@@ -83,4 +83,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUpPage;
