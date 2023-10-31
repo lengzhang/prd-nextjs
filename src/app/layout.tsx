@@ -4,7 +4,6 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Property Report Dashboard",
-  viewport: { width: "device-width", initialScale: 1 },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-32x32.png",
