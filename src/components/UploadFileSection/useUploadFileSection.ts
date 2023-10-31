@@ -26,20 +26,20 @@ interface ReportItem {
 
 interface State {
   status: "processing" | "done" | "error";
-  done: boolean;
   report: ReportItem;
   confirmed: boolean;
+  isUploading: boolean;
 }
 
 type Action =
   | { type: "process-failed" }
   | { type: "set-report"; value: ReportItem }
   | { type: "update-field"; key: string; value: string | number }
-  | { type: "update-confirm-status"; value: boolean };
+  | { type: "update-confirm-status"; value: boolean }
+  | { type: "set-upload-status"; value: boolean };
 
 const initialState: State = {
   status: "processing",
-  done: false,
   report: {
     address: "",
     month: 0,
@@ -55,6 +55,7 @@ const initialState: State = {
     netIncome: 0,
   },
   confirmed: false,
+  isUploading: false,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -62,20 +63,16 @@ const reducer = (state: State, action: Action): State => {
     case "process-failed":
       return { ...state, status: "error" };
     case "set-report":
-      return {
-        ...state,
-        status: "done",
-        done: true,
-        report: { ...action.value },
-      };
+      return { ...state, status: "done", report: { ...action.value } };
     case "update-field":
       return {
         ...state,
         report: { ...state.report, [action.key]: action.value },
       };
-
     case "update-confirm-status":
       return { ...state, confirmed: action.value };
+    case "set-upload-status":
+      return { ...state, isUploading: action.value };
     default:
       return state;
   }
@@ -132,7 +129,8 @@ const useUploadFileSection = (file: File, removeFile: () => void) => {
 
   const onClickConfirmUploadReport: FormSubmitHandler = async (event) => {
     event.preventDefault();
-    if (!state.confirmed) return;
+    if (!state.confirmed || state.isUploading) return;
+    dispatch({ type: "set-upload-status", value: true });
     const formData = new FormData();
     formData.append("address", state.report.address);
     formData.append("year", state.report.year.toString());
@@ -185,6 +183,7 @@ const useUploadFileSection = (file: File, removeFile: () => void) => {
       return;
     }
 
+    dispatch({ type: "set-upload-status", value: false });
     enqueueSnackbar("Report upload success.", { variant: "success" });
     removeFile();
   };

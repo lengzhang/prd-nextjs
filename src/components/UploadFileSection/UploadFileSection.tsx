@@ -1,19 +1,12 @@
-import { FC, MouseEventHandler } from "react";
+import { FC } from "react";
 import {
   Box,
-  Button,
   Grid,
-  IconButton,
   InputAdornment,
+  LinearProgress,
   Paper,
-  Stack,
   TextField,
-  Tooltip,
-  Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
@@ -24,101 +17,13 @@ import {
   NET_FIELDS,
 } from "./constants";
 import useUploadFileSection from "./useUploadFileSection";
+import UploadFileSectionHeader from "./UploadFileSectionHeader";
+import UploadFileSectionAction from "./UploadFileSectionAction";
 
 interface UploadFileSectionProps {
   file: File;
   onRemoveFile: () => void;
 }
-
-const Header: FC<{
-  name: string;
-  onRemoveFile: () => void;
-  onOpenPDF: () => void;
-  reprocessPDF: () => void;
-}> = ({ name, onRemoveFile, onOpenPDF, reprocessPDF }) => {
-  return (
-    <Stack direction="row" justifyContent="space-between" alignItems="center">
-      <Typography variant="h6">{name}</Typography>
-      <Stack direction="row" alignItems="center">
-        <Tooltip title="Delete the report">
-          <IconButton
-            aria-label="delete the report"
-            size="small"
-            onClick={onRemoveFile}
-            color="error"
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Open the PDF">
-          <IconButton
-            aria-label="open pdf in new tab"
-            size="small"
-            onClick={onOpenPDF}
-            color="info"
-          >
-            <PictureAsPdfIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Reprocess the PDF">
-          <IconButton
-            aria-label="reprocess the PDF"
-            size="small"
-            onClick={reprocessPDF}
-            color="success"
-          >
-            <RestartAltIcon />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-    </Stack>
-  );
-};
-
-const Action: FC<{
-  isConfirmed: boolean;
-  isDisabled: boolean;
-  onClickUploadReport: (value: boolean) => MouseEventHandler;
-}> = ({ isConfirmed, isDisabled, onClickUploadReport }) => {
-  return (
-    <Stack spacing={4} marginTop={1} direction="row" justifyContent="center">
-      {isConfirmed ? (
-        <>
-          <Button
-            fullWidth
-            variant="contained"
-            size="small"
-            color="success"
-            type="submit"
-            disabled={isDisabled}
-          >
-            confirm
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            size="small"
-            color="error"
-            onClick={onClickUploadReport(false)}
-          >
-            cancel
-          </Button>
-        </>
-      ) : (
-        <Button
-          fullWidth
-          variant="contained"
-          size="small"
-          color="info"
-          onClick={onClickUploadReport(true)}
-          disabled={isDisabled}
-        >
-          upload report
-        </Button>
-      )}
-    </Stack>
-  );
-};
 
 const UploadFileSection: FC<UploadFileSectionProps> = ({
   file,
@@ -133,9 +38,8 @@ const UploadFileSection: FC<UploadFileSectionProps> = ({
     onClickUploadReport,
     onClickConfirmUploadReport,
   } = useUploadFileSection(file, onRemoveFile);
-  if (!state.done) return null;
 
-  console.log(state.report);
+  if (state.status === "processing") return null;
 
   const shouldDisabled = () => {
     for (const key in state.report) {
@@ -148,7 +52,7 @@ const UploadFileSection: FC<UploadFileSectionProps> = ({
   return (
     <Paper variant="outlined" component={Box} padding={1}>
       <form onSubmit={onClickConfirmUploadReport}>
-        <Header
+        <UploadFileSectionHeader
           name={file.name}
           onRemoveFile={onRemoveFile}
           onOpenPDF={onOpenPDF}
@@ -213,11 +117,17 @@ const UploadFileSection: FC<UploadFileSectionProps> = ({
             </Grid>
           ))}
         </Box>
-        <Action
-          isConfirmed={state.confirmed}
-          isDisabled={shouldDisabled()}
-          onClickUploadReport={onClickUploadReport}
-        />
+        {state.isUploading ? (
+          <Box marginTop={1}>
+            <LinearProgress />
+          </Box>
+        ) : (
+          <UploadFileSectionAction
+            isConfirmed={state.confirmed}
+            isDisabled={shouldDisabled()}
+            onClickUploadReport={onClickUploadReport}
+          />
+        )}
       </form>
     </Paper>
   );
