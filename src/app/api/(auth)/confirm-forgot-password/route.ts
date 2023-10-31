@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { ConfirmForgotPasswordCommandInput } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import { ConfirmForgotPasswordCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { deleteAuthenticationResultFromCookies } from "@/app/api/utils";
+import { COGNITO_CLIENT_ID } from "@/utils/aws/constants";
 
 export const POST = async (
   request: NextRequest
@@ -19,7 +20,7 @@ export const POST = async (
 
     const confirmForgotPasswordCommandInput: ConfirmForgotPasswordCommandInput =
       {
-        ClientId: cognitoClientId,
+        ClientId: COGNITO_CLIENT_ID,
         Username: email,
         Password: password,
         ConfirmationCode: confirmationCode,

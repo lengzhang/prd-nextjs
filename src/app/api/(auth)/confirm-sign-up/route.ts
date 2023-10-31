@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { ConfirmSignUpCommandInput } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import { ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { deleteAuthenticationResultFromCookies } from "@/app/api/utils";
+import { COGNITO_CLIENT_ID } from "@/utils/aws/constants";
 
 export const POST = async (
   request: NextRequest
@@ -16,7 +17,7 @@ export const POST = async (
     if (!confirmationCode) throw new Error("Confirmation code is not found.");
 
     const confirmSignUpCommandInput: ConfirmSignUpCommandInput = {
-      ClientId: cognitoClientId,
+      ClientId: COGNITO_CLIENT_ID,
       Username: email,
       ConfirmationCode: confirmationCode,
     };

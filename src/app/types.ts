@@ -1,4 +1,9 @@
-import { ChangeEventHandler, FC, FormEventHandler } from "react";
+import {
+  ChangeEventHandler,
+  FC,
+  FormEventHandler,
+  MouseEventHandler,
+} from "react";
 
 export type LayoutComponent = FC<{ children: React.ReactNode }>;
 
@@ -7,6 +12,7 @@ export type TextFieldChangeHandler = ChangeEventHandler<
 >;
 
 export type FormSubmitHandler = FormEventHandler<HTMLFormElement>;
+export type OnClickHandler = MouseEventHandler<HTMLButtonElement>;
 
 export interface UserInfo {
   id: string;

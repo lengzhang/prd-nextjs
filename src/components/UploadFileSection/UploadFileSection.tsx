@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, MouseEventHandler } from "react";
 import {
   Box,
   Button,
@@ -78,7 +78,7 @@ const Header: FC<{
 const Action: FC<{
   isConfirmed: boolean;
   isDisabled: boolean;
-  onClickUploadReport: (value: boolean) => () => void;
+  onClickUploadReport: (value: boolean) => MouseEventHandler;
 }> = ({ isConfirmed, isDisabled, onClickUploadReport }) => {
   return (
     <Stack spacing={4} marginTop={1} direction="row" justifyContent="center">
@@ -132,7 +132,7 @@ const UploadFileSection: FC<UploadFileSectionProps> = ({
     onChangeDatePicker,
     onClickUploadReport,
     onClickConfirmUploadReport,
-  } = useUploadFileSection(file);
+  } = useUploadFileSection(file, onRemoveFile);
   if (!state.done) return null;
 
   console.log(state.report);

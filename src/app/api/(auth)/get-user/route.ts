@@ -5,10 +5,11 @@ import type {
   GetUserCommandOutput,
 } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import { GetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { UserInfo } from "@/app/types";
 import { deleteAuthenticationResultFromCookies } from "../../utils";
+import { processRefreshToken } from "../refresh-token/route";
 
 export const GET = async (): Promise<
   NextResponse<UserInfo | { message: string }>
@@ -25,6 +26,7 @@ export const GET = async (): Promise<
     const command = new GetUserCommand(getUserCommandInput);
     const response = await cognitoClient.send(command);
 
+    await processRefreshToken();
     return NextResponse.json(parseUserInfo(response), { status: 200 });
   } catch (error) {
     const errorMsg =

@@ -4,8 +4,9 @@ import type {
   ForgotPasswordCommandInput,
 } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import { ForgotPasswordCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { COGNITO_CLIENT_ID } from "@/utils/aws/constants";
 
 export const POST = async (
   request: NextRequest
@@ -16,7 +17,7 @@ export const POST = async (
     if (!email) throw new Error("Email is not found.");
 
     const forgotPasswordCommandInput: ForgotPasswordCommandInput = {
-      ClientId: cognitoClientId,
+      ClientId: COGNITO_CLIENT_ID,
       Username: email,
     };
     const command = new ForgotPasswordCommand(forgotPasswordCommandInput);

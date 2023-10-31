@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { InitiateAuthCommandInput } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import {
   AuthFlowType,
   InitiateAuthCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { setAuthenticationResultToCookies } from "@/app/api/utils";
+import { COGNITO_CLIENT_ID } from "@/utils/aws/constants";
 
 export const POST = async (
   request: NextRequest
@@ -21,7 +22,7 @@ export const POST = async (
     const initiateAuthCommandInput: InitiateAuthCommandInput = {
       AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
       AuthParameters: { USERNAME: email, PASSWORD: password },
-      ClientId: cognitoClientId,
+      ClientId: COGNITO_CLIENT_ID,
     };
     const command = new InitiateAuthCommand(initiateAuthCommandInput);
     const response = await cognitoClient.send(command);

@@ -3,11 +3,10 @@
  */
 
 import { CognitoIdentityProvider } from "@aws-sdk/client-cognito-identity-provider";
+import { AWS_REGION } from "@/utils/aws/constants";
 
 const cognitoClient = new CognitoIdentityProvider({
-  region: process.env.REGION || "",
+  region: AWS_REGION,
 });
 
-export const cognitoUserPoolId = process.env.COGNITO_USER_POOL_ID || "";
-export const cognitoClientId = process.env.COGNITO_APP_CLIENT_ID || "";
 export default cognitoClient;

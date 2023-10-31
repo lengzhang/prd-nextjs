@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import type { GlobalSignOutCommandInput } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import { GlobalSignOutCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { deleteAuthenticationResultFromCookies } from "@/app/api/utils";
 

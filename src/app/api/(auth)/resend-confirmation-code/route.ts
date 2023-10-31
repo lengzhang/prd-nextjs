@@ -4,8 +4,9 @@ import type {
   ResendConfirmationCodeCommandInput,
 } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import { ResendConfirmationCodeCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { COGNITO_CLIENT_ID } from "@/utils/aws/constants";
 
 /**
  * This method only work for resend sign up confirmation code
@@ -22,7 +23,7 @@ export const POST = async (
 
     const resendConfirmationCodeCommandInput: ResendConfirmationCodeCommandInput =
       {
-        ClientId: cognitoClientId,
+        ClientId: COGNITO_CLIENT_ID,
         Username: email,
       };
     const command = new ResendConfirmationCodeCommand(

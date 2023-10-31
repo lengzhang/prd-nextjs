@@ -4,8 +4,9 @@ import { AuthenticationResultType } from "@aws-sdk/client-cognito-identity-provi
 export const setAuthenticationResultToCookies = (
   result: AuthenticationResultType
 ) => {
+  const expiresIn = (result.ExpiresIn || 0) * 1000 + Date.now();
   cookies().set("accessToken", result.AccessToken || "");
-  cookies().set("expiresIn", result.ExpiresIn?.toString() || "");
+  cookies().set("expiresIn", expiresIn.toString() || "");
   cookies().set("refreshToken", result.RefreshToken || "");
   cookies().set("idToken", result.IdToken || "");
 };

@@ -1,11 +1,13 @@
-import { useEffect, useReducer } from "react";
+import { MouseEventHandler, useEffect, useReducer } from "react";
+import dayjs from "dayjs";
+import { useSnackbar } from "notistack";
+
 import {
   getTextItemsFromPDF,
   processTextItems,
   readPDFFromBuffer,
 } from "./utils";
 import { FormSubmitHandler, TextFieldChangeHandler } from "@/app/types";
-import dayjs from "dayjs";
 
 interface ReportItem {
   address: string;
@@ -79,7 +81,8 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const useUploadFileSection = (file: File) => {
+const useUploadFileSection = (file: File, removeFile: () => void) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -115,19 +118,75 @@ const useUploadFileSection = (file: File) => {
     };
 
   const onChangeDatePicker = (value: dayjs.Dayjs | null) => {
-    // console.log(value?.get());
     if (!value) return;
     dispatch({ type: "update-field", key: "year", value: value.get("year") });
     dispatch({ type: "update-field", key: "month", value: value.get("month") });
   };
 
-  const onClickUploadReport = (value: boolean) => () => {
-    dispatch({ type: "update-confirm-status", value });
-  };
+  const onClickUploadReport =
+    (value: boolean): MouseEventHandler =>
+    (event) => {
+      event.preventDefault();
+      dispatch({ type: "update-confirm-status", value });
+    };
 
-  const onClickConfirmUploadReport: FormSubmitHandler = (event) => {
+  const onClickConfirmUploadReport: FormSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(event.target);
+    if (!state.confirmed) return;
+    const formData = new FormData();
+    formData.append("address", state.report.address);
+    formData.append("year", state.report.year.toString());
+    formData.append("month", state.report.month.toString());
+
+    const response = await fetch("/api/reports/upload", {
+      body: formData,
+      method: "POST",
+    });
+
+    if (response.status !== 200) {
+      const { message = "Unexpected service exception." } =
+        await response.json();
+      enqueueSnackbar(message, { variant: "error" });
+      return;
+    }
+
+    const {
+      jsonSignedUrl,
+      pdfSignedUrl,
+    }: { jsonSignedUrl: string; pdfSignedUrl: string } = await response.json();
+    if (!jsonSignedUrl || !pdfSignedUrl) {
+      enqueueSnackbar("Signed url is invalid.", { variant: "error" });
+      return;
+    }
+
+    const jsonSignedUrlResponse = await fetch(jsonSignedUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(state.report),
+    });
+
+    if (jsonSignedUrlResponse.status !== 200) {
+      const { message = "JSON report upload failed." } =
+        await jsonSignedUrlResponse.json();
+      enqueueSnackbar(message, { variant: "error" });
+      return;
+    }
+
+    const pdfSignedUrlResponse = await fetch(pdfSignedUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/pdf" },
+      body: file,
+    });
+
+    if (pdfSignedUrlResponse.status !== 200) {
+      const { message = "PDF file upload failed." } =
+        await pdfSignedUrlResponse.json();
+      enqueueSnackbar(message, { variant: "error" });
+      return;
+    }
+
+    enqueueSnackbar("Report upload success.", { variant: "success" });
+    removeFile();
   };
 
   return {

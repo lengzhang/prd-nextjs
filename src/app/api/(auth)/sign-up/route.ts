@@ -4,11 +4,12 @@ import type {
   SignUpCommandOutput,
 } from "@aws-sdk/client-cognito-identity-provider";
 
-import cognitoClient, { cognitoClientId } from "@/utils/cognito/cognitoClient";
+import cognitoClient from "@/utils/aws/cognito";
 import {
   AttributeType,
   SignUpCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { COGNITO_CLIENT_ID } from "@/utils/aws/constants";
 
 export const POST = async (
   request: NextRequest
@@ -31,7 +32,7 @@ export const POST = async (
     ];
 
     const signUpCommandInput: SignUpCommandInput = {
-      ClientId: cognitoClientId,
+      ClientId: COGNITO_CLIENT_ID,
       Username: email,
       Password: password,
       UserAttributes: userAttributes,
