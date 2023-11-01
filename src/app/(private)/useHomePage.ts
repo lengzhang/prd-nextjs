@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 
 import { useAuthContext } from "@/context/AuthContext";
 import { useLoadingBackdropContext } from "@/context/LoadingBackdropContext";
+import { useSnackbar } from "notistack";
 
 const useHomePage = () => {
   const { userInfo } = useAuthContext();
-  const [addressKeys, setAddressKeys] = useState<string[]>([]);
+  const { enqueueSnackbar } = useSnackbar();
   const { handleLoadingState } = useLoadingBackdropContext();
+  const [addressKeys, setAddressKeys] = useState<string[]>([]);
 
   useEffect(() => {
     if (userInfo !== null) {
@@ -23,8 +25,16 @@ const useHomePage = () => {
       `/api/reports/list-address?${searchParams.toString()}`
     );
 
-    const data = await response.json();
-    setAddressKeys(data);
+    if (response.status !== 200) {
+      const { message = "Unexpected service exception." } =
+        await response.json();
+      enqueueSnackbar(message, { variant: "error" });
+      return;
+    } else {
+      const data = await response.json();
+      setAddressKeys(data);
+    }
+
     handleLoadingState(false);
   };
 
