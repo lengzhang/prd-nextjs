@@ -30,10 +30,11 @@ const useHomePage = () => {
         await response.json();
       enqueueSnackbar(message, { variant: "error" });
       return;
+    } else {
+      const data = await response.json();
+      setAddressKeys(data);
     }
 
-    const data = await response.json();
-    setAddressKeys(data);
     handleLoadingState(false);
   };
 

@@ -5,4 +5,6 @@ export const COGNITO_CLIENT_ID = process.env.COGNITO_CLIENT_ID || "";
 export const COGNITO_IDENTITY_POOL_ID =
   process.env.COGNITO_IDENTITY_POOL_ID || "";
 
-export const REPORT_BUCKET_NAME = process.env.REPORT_BUCKET_NAME;
+export const REPORT_BUCKET_NAME = `${
+  process.env.VERCEL_ENV === "production" ? "prod" : "dev"
+}-${process.env.REPORT_BUCKET_NAME}`;
