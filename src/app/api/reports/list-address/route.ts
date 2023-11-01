@@ -39,6 +39,9 @@ export const GET = async (request: NextRequest) => {
   } catch (error) {
     const errorMsg =
       error instanceof Error ? error.message : "Unknown exception.";
-    return NextResponse.json({ message: errorMsg }, { status: 500 });
+    return NextResponse.json(
+      { message: errorMsg + REPORT_BUCKET_NAME },
+      { status: 500 }
+    );
   }
 };
