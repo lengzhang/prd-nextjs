@@ -39,16 +39,13 @@ const UploadReportsPage = () => {
       </Button>
       <Box marginTop={2}>
         <Stack spacing={2}>
-          {Object.keys(state.files).map((key) => {
-            const file = state.files[key];
-            return (
-              <UploadFileSection
-                key={key}
-                file={file}
-                onRemoveFile={onRemoveFile(key)}
-              />
-            );
-          })}
+          {Object.keys(state.files).map((key) => (
+            <UploadFileSection
+              key={key}
+              file={state.files[key]}
+              onRemoveFile={onRemoveFile(key)}
+            />
+          ))}
         </Stack>
       </Box>
     </>

@@ -43,8 +43,8 @@ const UploadFileSection: FC<UploadFileSectionProps> = ({
 
   const shouldDisabled = () => {
     for (const key in state.report) {
-      const value = (state.report as any)[key];
-      if (`${value}` === "NaN" || value < 0) return true;
+      const valueIsNaN = Number.isNaN((state.report as any)[key]);
+      if (valueIsNaN) return true;
     }
     return false;
   };
@@ -91,17 +91,19 @@ const UploadFileSection: FC<UploadFileSectionProps> = ({
               marginTop={0}
             >
               {fields.map((key) => {
-                const value = `${(state.report as any)[key]}`;
+                const value = (state.report as any)[key];
+                const valueIsNaN = Number.isNaN(value);
+                const valueStr = valueIsNaN ? "" : `${value}`;
                 return (
                   <Grid key={key} item xs={6} md={3}>
                     <TextField
                       label={NAME_LABEL_MAPPER[key]}
-                      value={value}
+                      value={valueStr}
                       onChange={onChangeField(key)}
                       size="small"
                       fullWidth
                       type="number"
-                      error={value === "-1"}
+                      error={valueIsNaN}
                       required
                       InputProps={{
                         startAdornment: (

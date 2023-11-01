@@ -1,25 +1,26 @@
 "use client";
 
-import { UserInfo } from "@/app/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useReducer, createContext, useContext } from "react";
-import { useLoadingBackdropContext } from "../LoadingBackdropContext";
 import { useSnackbar } from "notistack";
 
+import { UserInfo } from "@/app/types";
+import { useLoadingBackdropContext } from "../LoadingBackdropContext";
+
 interface State {
-  user: UserInfo | null;
+  userInfo: UserInfo | null;
 }
 
 type Action = { type: "set-user"; value: UserInfo };
 
 export const initialState: State = {
-  user: null,
+  userInfo: null,
 };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "set-user":
-      return { ...state, user: action.value };
+      return { ...state, userInfo: action.value };
 
     default:
       return state;
@@ -28,10 +29,7 @@ const reducer = (state: State, action: Action): State => {
 
 export const authContext = createContext<
   ReturnType<typeof useAuthContextProvider>
->({
-  state: initialState,
-  handleSignOut: async () => {},
-});
+>({ ...initialState, handleSignOut: async () => {} });
 
 export const useAuthContext = () => useContext(authContext);
 
@@ -85,7 +83,7 @@ const useAuthContextProvider = () => {
     handleLoadingState(false);
   };
 
-  return { state, handleSignOut };
+  return { ...state, handleSignOut };
 };
 
 export default useAuthContextProvider;

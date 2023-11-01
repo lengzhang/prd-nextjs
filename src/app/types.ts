@@ -22,3 +22,18 @@ export interface UserInfo {
   updatedAt: number | null;
   createdAt: number | null;
 }
+
+export interface ReportItem {
+  address: string;
+  month: number;
+  year: number;
+  rentalIncome: number;
+  totalIncome: number;
+  totalLandscapeAndGardening: number;
+  managementFees: number;
+  totalRepairsAndMaintenance: number;
+  totalUtilities: number;
+  totalExpense: number;
+  netOrdinaryIncome: number;
+  netIncome: number;
+}

@@ -65,7 +65,7 @@ export const processTextItems = (textItems: TextItem[]) => {
 
     if (!LABEL_NAME_MAPPER[str]) continue;
     const value = Number(items[i + 1].str.replace(",", ""));
-    obj[LABEL_NAME_MAPPER[str]] = isNaN(value) ? -1 : value;
+    obj[LABEL_NAME_MAPPER[str]] = value;
   }
   return obj;
 };

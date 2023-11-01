@@ -3,26 +3,16 @@ import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
 
 import {
+  FormSubmitHandler,
+  ReportItem,
+  TextFieldChangeHandler,
+} from "@/app/types";
+
+import {
   getTextItemsFromPDF,
   processTextItems,
   readPDFFromBuffer,
 } from "./utils";
-import { FormSubmitHandler, TextFieldChangeHandler } from "@/app/types";
-
-interface ReportItem {
-  address: string;
-  month: number;
-  year: number;
-  rentalIncome: number;
-  totalIncome: number;
-  totalLandscapeAndGardening: number;
-  managementFees: number;
-  totalRepairsAndMaintenance: number;
-  totalUtilities: number;
-  totalExpense: number;
-  netOrdinaryIncome: number;
-  netIncome: number;
-}
 
 interface State {
   status: "processing" | "done" | "error";
