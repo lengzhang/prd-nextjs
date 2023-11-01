@@ -6,19 +6,37 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pull-env": "vercel env pull .env.local"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.438.0",
+    "@aws-sdk/client-s3": "^3.438.0",
+    "@aws-sdk/credential-providers": "^3.438.0",
+    "@aws-sdk/s3-request-presigner": "^3.438.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.15",
+    "@mui/material": "^5.14.15",
+    "@mui/x-data-grid": "^6.17.0",
+    "@mui/x-date-pickers": "^6.17.0",
+    "aws-jwt-verify": "^4.0.0",
+    "dayjs": "^1.11.10",
+    "next": "14.0.0",
+    "notistack": "^3.0.1",
+    "pdfjs-dist": "^3.11.174",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.0.0"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
+    "@types/pdfjs-dist": "^2.10.378",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.0.0"
+    "eslint-config-next": "14.0.0",
+    "nextjs-node-loader": "^1.1.5-alpha.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5"
   }
 }
